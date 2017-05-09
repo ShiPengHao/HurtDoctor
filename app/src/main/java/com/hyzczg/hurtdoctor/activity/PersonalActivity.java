@@ -20,7 +20,6 @@ import com.hyzczg.hurtdoctor.utils.RetrofitHelper;
 
 import java.util.ArrayList;
 
-import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
@@ -30,7 +29,6 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
     private ActivityDoctorBinding mDoctorBinding;
     private RecyclerView.Adapter mRecycleAdapter;
     private ArrayList<MovieBean> mMovieList = new ArrayList<>();
-    private Observable<MovieBean> movieBeanObservable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +39,13 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
         getMovieList();
     }
 
+    /**
+     * 练习简单数据绑定
+     */
     public void setBinding() {
         mDoctorBean = new DoctorBean("孙连城", "410102201704263518", "id1", "h1", "d1", "胸怀宇宙");
         mDoctorBinding.setDoctor(mDoctorBean);
-        mDoctorBean.name = "李达康";
+//        mDoctorBean.name = "李达康";
         mDoctorBinding.setOnClickListener(this);
     }
 
@@ -58,7 +59,7 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
     }
 
     /**
-     * 从豆瓣获取第一篇文章的标题，并吐司显示出来
+     * 从豆瓣获取第一篇文章的标题，并吐司显示标题
      */
     private void getMovie() {
         Observer<MovieBean> mMovieSubscriber = new Observer<MovieBean>() {
@@ -85,14 +86,14 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
     }
 
     /**
-     * 从豆瓣获取一组文章，并显示标题到recycle view
+     * 从豆瓣获取一组文章，并显示标题和图片到recycle view
      */
     private void getMovieList() {
         mMovieList.clear();
         mRecycleAdapter = new CommonRecycleAdapter<MovieBean>(this, mMovieList, R.layout.item_movie) {
 
             @Override
-            public void convert(CommonRecycleHolder holder, MovieBean bean) {
+            public void bind(CommonRecycleHolder holder, MovieBean bean) {
                 holder.setText(R.id.tv, bean.getTitle()).setImageUrl(R.id.iv, bean.getImages().getLarge());
             }
         };
@@ -122,6 +123,6 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
                 mRecycleAdapter.notifyDataSetChanged();
             }
         };
-        movieBeanObservable = RetrofitHelper.getInstance().getMovies(mMoviesSubscriber, 0, 200);
+        RetrofitHelper.getInstance().getMovies(mMoviesSubscriber, 0, 200);
     }
 }

@@ -3,7 +3,7 @@ package com.hyzczg.hurtdoctor.bean;
 import java.util.List;
 
 /**
- * Created by 依萌 on 2017/4/28.
+ * 豆瓣电影api top250返回的电影条目bean
  */
 
 public class MovieBean {

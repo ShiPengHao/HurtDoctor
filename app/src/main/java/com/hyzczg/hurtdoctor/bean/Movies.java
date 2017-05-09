@@ -1,7 +1,7 @@
 package com.hyzczg.hurtdoctor.bean;
 
 /**
- * Created by 依萌 on 2017/4/28.
+ * 豆瓣电影api top250返回的数据结构bean
  */
 
 public class Movies {
