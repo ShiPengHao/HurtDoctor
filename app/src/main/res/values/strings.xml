@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">HurtDoctor</string>
+    <string name="title">职称</string>
+    <string name="id">编号</string>
+</resources>

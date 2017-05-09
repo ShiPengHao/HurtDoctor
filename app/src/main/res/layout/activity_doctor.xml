@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <import type="com.hyzczg.hurtdoctor.bean.DoctorBean" />
+
+        <variable
+            name="doctor"
+            type="DoctorBean" />
+
+        <variable
+            name="onClickListener"
+            type="android.view.View.OnClickListener" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/padding_general"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/finger"
+                android:gravity="center_vertical"
+                android:onClick="@{onClickListener}"
+                android:text="@={doctor.name}"
+                android:textSize="@dimen/text_size_general" />
+
+            <include layout="@layout/divider_grey" />
+
+            <EditText
+                android:id="@+id/et_title"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/finger"
+                android:background="@null"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:gravity="center_vertical"
+                android:hint="@string/title"
+                android:text="@={doctor.id}"
+                android:textSize="@dimen/text_size_general" />
+
+            <include layout="@layout/divider_gradient" />
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none" />
+        </LinearLayout>
+    </ScrollView>
+</layout>
