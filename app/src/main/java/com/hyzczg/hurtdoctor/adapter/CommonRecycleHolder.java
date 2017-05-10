@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -14,11 +15,13 @@ import com.hyzczg.hurtdoctor.utils.MyApp;
  */
 public class CommonRecycleHolder extends RecyclerView.ViewHolder {
 
+    public final int mLayoutId;
     private SparseArray<View> mViews;
 
-    public CommonRecycleHolder(View itemView) {
+    public CommonRecycleHolder(View itemView,int layoutId) {
         super(itemView);
         mViews = new SparseArray<>();
+        mLayoutId = layoutId;
     }
 
     /**
@@ -42,9 +45,9 @@ public class CommonRecycleHolder extends RecyclerView.ViewHolder {
         return this;
     }
 
-    public CommonRecycleHolder setImageUrl(int viewId, String resId) {
+    public CommonRecycleHolder setImageUrl(int viewId, String url) {
         ImageView imageView = getView(viewId);
-        Glide.with(MyApp.getMyApp()).load(resId).into(imageView);
+        Glide.with(MyApp.getMyApp()).load(url).into(imageView);
         return this;
     }
 

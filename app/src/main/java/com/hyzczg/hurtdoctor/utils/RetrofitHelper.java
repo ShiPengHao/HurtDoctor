@@ -32,6 +32,7 @@ public class RetrofitHelper {
     private RetrofitHelper() {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(TIMEOUT_DEFAULT, TimeUnit.SECONDS)
+                .readTimeout(TIMEOUT_DEFAULT,TimeUnit.SECONDS)
                 .build();
         mRetrofit = new Retrofit.Builder()
                 .client(okHttpClient)
@@ -61,16 +62,10 @@ public class RetrofitHelper {
             mMovieService = mRetrofit.create(MovieService.class);
         }
         Observable<MovieBean> observable = mMovieService.getMovies(start, count)
-                .map(new Function<Response<Movies>, List<MovieBean>>() {
+                .flatMap(new Function<Movies, Observable<MovieBean>>() {
                     @Override
-                    public List<MovieBean> apply(Response<Movies> doctorsBeanResponse) throws Exception {
-                        return doctorsBeanResponse.body().subjects;
-                    }
-                })
-                .flatMap(new Function<List<MovieBean>, Observable<MovieBean>>() {
-                    @Override
-                    public Observable<MovieBean> apply(List<MovieBean> doctors) throws Exception {
-                        return Observable.fromIterable(doctors);
+                    public Observable<MovieBean> apply(Movies movies) throws Exception {
+                        return Observable.fromIterable(movies.subjects);
                     }
                 })
                 .subscribeOn(Schedulers.io())

@@ -92,7 +92,7 @@ public abstract class CommonRecycleAdapter<T> extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int layoutId = INVALID_LAYOUT_ID == mLayoutId ? mTypeSupport.getLayoutId(viewType) : mLayoutId;
-        return new CommonRecycleHolder(LayoutInflater.from(mContext).inflate(layoutId, parent, false));
+        return new CommonRecycleHolder(LayoutInflater.from(mContext).inflate(layoutId, parent, false), layoutId);
     }
 
     @Override
@@ -103,8 +103,9 @@ public abstract class CommonRecycleAdapter<T> extends RecyclerView.Adapter {
 
     /**
      * 将数据绑定到对应的holder
+     *
      * @param holder holder
-     * @param bean 数据
+     * @param bean   数据
      */
     public abstract void bind(CommonRecycleHolder holder, T bean);
 

@@ -3,9 +3,8 @@ package com.hyzczg.hurtdoctor.activity;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
@@ -20,6 +19,7 @@ import com.hyzczg.hurtdoctor.utils.RetrofitHelper;
 
 import java.util.ArrayList;
 
+import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
@@ -29,6 +29,7 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
     private ActivityDoctorBinding mDoctorBinding;
     private RecyclerView.Adapter mRecycleAdapter;
     private ArrayList<MovieBean> mMovieList = new ArrayList<>();
+    private Observable<MovieBean> movieBeanObservable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,16 +91,44 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
      */
     private void getMovieList() {
         mMovieList.clear();
-        mRecycleAdapter = new CommonRecycleAdapter<MovieBean>(this, mMovieList, R.layout.item_movie) {
+        CommonRecycleAdapter.MultiItemTypeSupport<MovieBean> typeSupport = new CommonRecycleAdapter.MultiItemTypeSupport<MovieBean>() {
+
+            private final int TYPE1 = 0;
+            private final int TYPE2 = 1;
+
+            @Override
+            public int getItemViewType(int position, MovieBean movieBean) {
+                return position % 2;
+            }
+
+            @Override
+            public int getLayoutId(int viewType) {
+                switch (viewType) {
+                    case TYPE1:
+                        return R.layout.item_movie;
+                    case TYPE2:
+                        return R.layout.item_ad;
+                }
+                return 0;
+            }
+        };
+        mRecycleAdapter = new CommonRecycleAdapter<MovieBean>(this, mMovieList, typeSupport) {
 
             @Override
             public void bind(CommonRecycleHolder holder, MovieBean bean) {
-                holder.setText(R.id.tv, bean.getTitle()).setImageUrl(R.id.iv, bean.getImages().getLarge());
+                switch (holder.mLayoutId) {
+                    case R.layout.item_movie:
+                        holder.setText(R.id.tv, bean.getTitle()).setImageUrl(R.id.iv, bean.getImages().getLarge());
+                        break;
+                    case R.layout.item_ad:
+                        holder.setText(R.id.tv, bean.getTitle());
+                        break;
+                }
             }
         };
         mDoctorBinding.rv.setAdapter(mRecycleAdapter);
-        mDoctorBinding.rv.setLayoutManager(new GridLayoutManager(this, 3));
-        mDoctorBinding.rv.setItemAnimator(new DefaultItemAnimator());
+        mDoctorBinding.rv.setLayoutManager(new LinearLayoutManager(this));
+//        mDoctorBinding.rv.setItemAnimator(new DefaultItemAnimator());
         mDoctorBinding.rv.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         Observer<MovieBean> mMoviesSubscriber = new Observer<MovieBean>() {
             @Override
@@ -115,6 +144,8 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
 
             @Override
             public void onError(Throwable e) {
+                Toast.makeText(PersonalActivity.this, "on error", Toast.LENGTH_SHORT).show();
+//                movieBeanObservable.retry();
                 e.printStackTrace();
             }
 
@@ -123,6 +154,6 @@ public class PersonalActivity extends AppCompatActivity implements View.OnClickL
                 mRecycleAdapter.notifyDataSetChanged();
             }
         };
-        RetrofitHelper.getInstance().getMovies(mMoviesSubscriber, 0, 200);
+        movieBeanObservable = RetrofitHelper.getInstance().getMovies(mMoviesSubscriber, 0, 200);
     }
 }
